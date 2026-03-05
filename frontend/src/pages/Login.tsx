@@ -40,6 +40,9 @@ function Login() {
 
   return (
     <div className="auth-container">
+      <header>
+        <h1 className="logo">TimeTracker</h1>
+      </header>
       <div className="auth-card">
         <h1>Log In</h1>
         {error && <p className="error-msg">{error}</p>}

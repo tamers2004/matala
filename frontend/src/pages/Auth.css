@@ -1,5 +1,7 @@
 .auth-container {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
@@ -98,3 +100,4 @@
 .auth-card .link a:hover {
   text-decoration: underline;
 }
+
