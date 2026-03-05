@@ -1,5 +1,7 @@
 using Backend.Api.DTOs;
 using Backend.Api.Models;
+using System.Net.Http;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Api.Controllers;
@@ -30,7 +32,7 @@ public class TimeAuditsController : ControllerBase
         {
             Id = a.Id,
             Type = a.Type,
-            Timestamp = a.Timestamp
+            Timestamp = a.Timestamp.ToUniversalTime()
         }).ToList();
 
         return Ok(response);
@@ -60,11 +62,22 @@ public class TimeAuditsController : ControllerBase
 
         var id = await TimeAudit.CreateAsync(_connectionString, audit);
 
+        var client = new HttpClient();
+
+        var response = await client.GetAsync("https://time.now/developer/api/timezone/Europe/Zurich");
+        response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync();
+
+
+        var jsonDoc = JsonDocument.Parse(json);
+        var zurichTime = DateTime.Parse(jsonDoc.RootElement.GetProperty("datetime").GetString());
+        
         var created = new TimeAuditResponse
         {
             Id = id,
             Type = audit.Type,
-            Timestamp = DateTime.UtcNow
+            Timestamp = zurichTime.ToUniversalTime()
         };
 
         return Created($"/api/timeaudits/{id}", created);
@@ -84,7 +97,7 @@ public class TimeAuditsController : ControllerBase
         {
             clockedIn = latest.Type == "clock_in",
             lastType = latest.Type,
-            lastTimestamp = latest.Timestamp
+            lastTimestamp = latest.Timestamp.ToUniversalTime()
         });
     }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Dashboard.css'
 
@@ -43,12 +43,16 @@ function Dashboard() {
   const [status, setStatus] = useState<ClockStatus | null>(null)
   const [todayAudits, setTodayAudits] = useState<TimeAuditEntry[]>([])
   const [error, setError] = useState('')
-  const [clocking, setClocking] = useState(false)
+  const [clocking, setClocking] = useState(false);
+
 
   useEffect(() => {
+
     const interval = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(interval)
   }, [])
+
+
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -69,11 +73,13 @@ function Dashboard() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const all: TimeAuditEntry[] = await res.json()
       const todayStr = today.toLocaleDateString()
+      console.log({all})
       setTodayAudits(all.filter(a => new Date(a.timestamp).toLocaleDateString() === todayStr))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load audits')
     }
   }, [])
+
 
   useEffect(() => {
     fetchStatus()
