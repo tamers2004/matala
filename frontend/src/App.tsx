@@ -18,7 +18,7 @@ function App() {
         } />
         <Route path="/timeaudits" element={
           <ProtectedRoute>
-            <Layout><Login /></Layout>
+            <Layout><TimeAudits /></Layout>
           </ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
